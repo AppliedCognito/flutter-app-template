@@ -7,11 +7,10 @@ A boilerplate Flutter project with:
 - 🧠 Riverpod for state management (with MVVM pattern)  
 - 🗂️ Clean folder structure  
 - 🌗 Light/Dark theme support  
-- 🎨 Centralized ColorScheme and AppTextTheme  
-- 🧑‍💻 Shared VS Code settings for all developers  
-- 🧭 Gap package for spacing  
-- 📐 Context Extensions for cleaner code  
 - 📦 FVM support for consistent Flutter version across teams  
+- 🧑‍💻 Shared VS Code settings for all developers  
+- 🧭 Gap package for spaces  
+- ✨ Custom extensions for theme, colorScheme, padding, and screen dimensions
 
 ---
 
@@ -20,16 +19,15 @@ A boilerplate Flutter project with:
 ```
 lib/
 ├── core/
-│   ├── extensions/        # Context-based helpers for theme, media query, etc.
-│   ├── router/            # App-wide navigation (GoRouter)
-│   └── theme/             # Light & dark theme configuration, AppColors, TextTheme
+│   ├── router/        # App-wide navigation (GoRouter)
+│   └── theme/         # Light & dark theme configuration
 ├── features/
 │   └── counter/
-│       ├── presentation/  # UI layer
-│       └── providers/     # Riverpod state providers
+│       ├── presentation/ # UI layer
+│       └── providers/    # Riverpod state providers
 ├── providers/             # Global app-level providers
 ├── presentation/          # Shared widgets across features
-└── main.dart              # Entry point with theme and router setup
+└── main.dart
 ```
 
 ---
@@ -86,6 +84,7 @@ Then add it to your path:
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 ```
 
+For Windows users, add it via Environment Variables.  
 More help: [https://fvm.app/docs/getting_started/installation](https://fvm.app/docs/getting_started/installation)
 
 ---
@@ -98,117 +97,113 @@ This project includes a `.vscode/settings.json` file to ensure:
 - Auto formatting on save
 - Code fixes automatically applied
 
+```json
+{
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "editor.formatOnSave": true,
+  "files.eol": "\n",
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always"
+  }
+}
+```
+
 ---
 
-## 🎨 Theme and Extensions
+## 📌 Project Extensions
 
-### ✅ AppColors & ColorScheme
-
-Centralized color values defined in `AppColors` and injected into light/dark `ColorScheme`:
+### ✅ Theme & ColorScheme Access
 
 ```dart
-colorScheme: const ColorScheme.light(
-  primary: AppColors.primary,
-  secondary: AppColors.secondary,
-  error: AppColors.error,
-  background: AppColors.background,
-  onPrimary: AppColors.onPrimary,
-  onSecondary: AppColors.onSecondary,
-)
+extension ThemeContext on BuildContext {
+  TextTheme get textTheme => Theme.of(this).textTheme;
+  ColorScheme get colorScheme => Theme.of(this).colorScheme;
+  ThemeData get theme => Theme.of(this);
+}
 ```
 
-Access anywhere via:
+Usage:
 
 ```dart
-context.colorScheme.primary
-```
-
-### ✅ AppTextTheme
-
-Custom text styles with semantic naming:
-
-```dart
-style: context.textTheme.bodyMedium?.copyWith(
-  color: context.colorScheme.primary,
-  fontWeight: FontWeight.w500,
-)
+Text(
+  'Hello',
+  style: context.textTheme.bodyMedium?.copyWith(
+    color: context.colorScheme.primary,
+  ),
+);
 ```
 
 ### ✅ Padding Extensions
 
-Clean and reusable padding styles:
-
 ```dart
-padding: context.paddingHorizontal,
-padding: context.paddingS,
-padding: context.paddingTopSafe,
+extension PaddingContext on BuildContext {
+  EdgeInsets get paddingS => const EdgeInsets.all(8);
+  EdgeInsets get paddingM => const EdgeInsets.all(16);
+  EdgeInsets get paddingHorizontal => const EdgeInsets.symmetric(horizontal: 16);
+}
 ```
 
-Extensions live in `core/extensions/context_extensions.dart`.
-
----
-
-## 🧑‍💻 Example Usage in Screens
+Usage:
 
 ```dart
 Padding(
   padding: context.paddingHorizontal,
-  child: Column(
-    children: [
-      Text(
-        "Hello, this is the base template",
-        style: context.textTheme.bodyMedium?.copyWith(
-          color: context.colorScheme.primary,
-        ),
-      ),
-    ],
+  child: Text('Hello'),
+);
+```
+
+---
+
+## 🎨 ColorScheme + AppColors Usage
+
+This template uses `ColorScheme` for theme-aware UI. All semantic colors like `primary`, `onPrimary`, `secondary`, `error`, etc., are mapped using `AppColors`.
+
+`AppColors` provides consistent base colors, which are used to generate the `ColorScheme` for both light and dark themes.
+
+```dart
+class AppColors {
+  static const Color primary = Color(0xFF1976D2); // Blue
+  static const Color onPrimary = Colors.white;
+  static const Color secondary = Color(0xFFFFA000); // Amber
+  static const Color error = Color(0xFFD32F2F); // Red
+  static const Color background = Colors.white;
+  static const Color onBackground = Colors.black;
+}
+```
+
+Then these are mapped in `ThemeData.colorScheme`:
+
+```dart
+ThemeData(
+  colorScheme: ColorScheme.light(
+    primary: AppColors.primary,
+    onPrimary: AppColors.onPrimary,
+    background: AppColors.background,
+    onBackground: AppColors.onBackground,
+    secondary: AppColors.secondary,
+    error: AppColors.error,
   ),
 )
 ```
 
-This ensures consistency across themes and responsiveness on all devices.
+### ✅ Usage Example in Widgets
 
----
-
-## 👥 Team Collaboration (Git Setup Tips)
-
-### Git Ignore Setup
-
-Ensure your `.gitignore` includes:
-
-```
-.vscode/*
-!.vscode/settings.json
-.fvm/
-android/.gradle/
-build/
-.dart_tool/
-.idea/
+```dart
+Container(
+  padding: context.paddingS,
+  color: AppColors.primary, // Shows actual color (VS Code color box)
+  child: Text(
+    'Primary container',
+    style: context.textTheme.bodyMedium?.copyWith(
+      color: AppColors.onPrimary, // Text color on primary
+    ),
+  ),
+);
 ```
 
-### Git Workflow
+🖼️ In VS Code, using `AppColors.primary` will show a small color preview box beside the color value, useful for visual identification.
 
-- Always pull the latest changes before starting work:
-
-```bash
-git pull origin main
-```
-
-- Create a feature branch for your changes:
-
-```bash
-git checkout -b feature/your-feature-name
-```
-
-- After completing your feature:
-
-```bash
-git add .
-git commit -m "Add: your feature description"
-git push origin feature/your-feature-name
-```
-
-Open a Pull Request → Reviewer checks → Merger merges to `main`.
+> Prefer using `context.colorScheme.primary` when building theme-aware widgets that auto-adjust for dark/light modes.
 
 ---
 
@@ -216,16 +211,10 @@ Open a Pull Request → Reviewer checks → Merger merges to `main`.
 
 You now have:
 
-- A professional project structure
-- Centralized theme and styling utilities
-- Consistent dev environment with FVM
-- Shared VS Code settings
-- Git workflow for team collaboration
+- ✅ A professional project structure
+- ✅ Consistent dev environment using FVM
+- ✅ Shared VS Code settings
+- ✅ Git workflow to avoid conflicts
+- ✅ AppColors, ColorScheme, and Padding extensions for scalability
 
 Start building scalable, error-free apps as a team! 🚀
-
----
-
-### 💬 Need Help?
-
-Open an issue or contact the maintainer.
