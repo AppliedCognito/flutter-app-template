@@ -14,7 +14,6 @@ migrate_working_dir/
 
 # FVM
 .fvm/
-!.fvm/fvm_config.json
 
 # VS Code
 .vscode/*

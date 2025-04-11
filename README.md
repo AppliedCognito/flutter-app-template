@@ -7,9 +7,11 @@ A boilerplate Flutter project with:
 - 🧠 Riverpod for state management (with MVVM pattern)  
 - 🗂️ Clean folder structure  
 - 🌗 Light/Dark theme support  
+- 🎨 Centralized ColorScheme and AppTextTheme  
+- 🧑‍💻 Shared VS Code settings for all developers  
+- 🧭 Gap package for spacing  
+- 📐 Context Extensions for cleaner code  
 - 📦 FVM support for consistent Flutter version across teams  
-- 🧑‍💻 Shared VS Code settings for all developers
-- 🧭 Gap package for spaces
 
 ---
 
@@ -18,15 +20,16 @@ A boilerplate Flutter project with:
 ```
 lib/
 ├── core/
-│   ├── router/        # App-wide navigation (GoRouter)
-│   └── theme/         # Light & dark theme configuration
+│   ├── extensions/        # Context-based helpers for theme, media query, etc.
+│   ├── router/            # App-wide navigation (GoRouter)
+│   └── theme/             # Light & dark theme configuration, AppColors, TextTheme
 ├── features/
 │   └── counter/
-│       ├── presentation/ # UI layer
-│       └── providers/    # Riverpod state providers
+│       ├── presentation/  # UI layer
+│       └── providers/     # Riverpod state providers
 ├── providers/             # Global app-level providers
 ├── presentation/          # Shared widgets across features
-└── main.dart
+└── main.dart              # Entry point with theme and router setup
 ```
 
 ---
@@ -83,7 +86,6 @@ Then add it to your path:
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 ```
 
-For Windows users, add it via Environment Variables.  
 More help: [https://fvm.app/docs/getting_started/installation](https://fvm.app/docs/getting_started/installation)
 
 ---
@@ -96,26 +98,81 @@ This project includes a `.vscode/settings.json` file to ensure:
 - Auto formatting on save
 - Code fixes automatically applied
 
-### `.vscode/settings.json`:
+---
 
-```json
-{
-  "dart.flutterSdkPath": ".fvm/flutter_sdk",
-  "editor.formatOnSave": true,
-  "files.eol": "\n",
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "always"
-  }
-}
+## 🎨 Theme and Extensions
+
+### ✅ AppColors & ColorScheme
+
+Centralized color values defined in `AppColors` and injected into light/dark `ColorScheme`:
+
+```dart
+colorScheme: const ColorScheme.light(
+  primary: AppColors.primary,
+  secondary: AppColors.secondary,
+  error: AppColors.error,
+  background: AppColors.background,
+  onPrimary: AppColors.onPrimary,
+  onSecondary: AppColors.onSecondary,
+)
 ```
 
-> ✅ **Note:** This file is committed into Git, so everyone gets the same configuration.
+Access anywhere via:
+
+```dart
+context.colorScheme.primary
+```
+
+### ✅ AppTextTheme
+
+Custom text styles with semantic naming:
+
+```dart
+style: context.textTheme.bodyMedium?.copyWith(
+  color: context.colorScheme.primary,
+  fontWeight: FontWeight.w500,
+)
+```
+
+### ✅ Padding Extensions
+
+Clean and reusable padding styles:
+
+```dart
+padding: context.paddingHorizontal,
+padding: context.paddingS,
+padding: context.paddingTopSafe,
+```
+
+Extensions live in `core/extensions/context_extensions.dart`.
+
+---
+
+## 🧑‍💻 Example Usage in Screens
+
+```dart
+Padding(
+  padding: context.paddingHorizontal,
+  child: Column(
+    children: [
+      Text(
+        "Hello, this is the base template",
+        style: context.textTheme.bodyMedium?.copyWith(
+          color: context.colorScheme.primary,
+        ),
+      ),
+    ],
+  ),
+)
+```
+
+This ensures consistency across themes and responsiveness on all devices.
 
 ---
 
 ## 👥 Team Collaboration (Git Setup Tips)
 
-### 1. Git Ignore Setup
+### Git Ignore Setup
 
 Ensure your `.gitignore` includes:
 
@@ -129,24 +186,21 @@ build/
 .idea/
 ```
 
-### 2. Shared Git Workflow
+### Git Workflow
 
-- One person is responsible for merging PRs to `main`.
-- All others must **always pull latest changes** before starting work:
+- Always pull the latest changes before starting work:
 
 ```bash
 git pull origin main
 ```
 
-### 3. Create Feature Branches
-
-Each developer should work on their own branch:
+- Create a feature branch for your changes:
 
 ```bash
 git checkout -b feature/your-feature-name
 ```
 
-Then after work is done:
+- After completing your feature:
 
 ```bash
 git add .
@@ -154,7 +208,7 @@ git commit -m "Add: your feature description"
 git push origin feature/your-feature-name
 ```
 
-Open a **Pull Request** → Reviewer checks → Merger merges to `main`.
+Open a Pull Request → Reviewer checks → Merger merges to `main`.
 
 ---
 
@@ -162,10 +216,11 @@ Open a **Pull Request** → Reviewer checks → Merger merges to `main`.
 
 You now have:
 
-- ✅ A professional project structure
-- ✅ Consistent dev environment using FVM
-- ✅ Shared VS Code settings
-- ✅ Git workflow to avoid conflicts
+- A professional project structure
+- Centralized theme and styling utilities
+- Consistent dev environment with FVM
+- Shared VS Code settings
+- Git workflow for team collaboration
 
 Start building scalable, error-free apps as a team! 🚀
 
@@ -173,5 +228,4 @@ Start building scalable, error-free apps as a team! 🚀
 
 ### 💬 Need Help?
 
-Feel free to open an issue or contact the maintainer.
-
+Open an issue or contact the maintainer.
