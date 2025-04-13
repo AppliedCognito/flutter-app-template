@@ -40,8 +40,8 @@ lib/
 - Clone the newly created repo:
 
 ```bash
-git clone https://github.com/AppliedCognito/flutter-app-template.git
-cd flutter_app_template
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
 ```
 
 ---
@@ -50,21 +50,52 @@ cd flutter_app_template
 
 ### 2. Install Dependencies
 
-#### If you're using **FVM** (recommended):
+#### 🟡 Important Notes About FVM and Flutter Version
+
+The `.fvm/fvm_config.json` in this template sets the version to `"stable"`.  
+However, **"stable" is a moving target**. It may change depending on when you clone the project.  
+To lock it to a fixed version like `"3.19.6"` (example), update the `fvm_config.json` like this:
+
+```json
+{
+  "flutterSdkVersion": "3.19.6"
+}
+```
+
+### ✅ Update FVM Configuration
+You can set the version using:
 
 ```bash
+fvm use 3.19.6
 fvm install
-fvm use
-fvm flutter pub get
 ```
 
-#### If you're **not using FVM**:
+Then everyone on the team will have the **exact same Flutter version**.
 
-Make sure your Flutter version matches the one in `.fvm/fvm_config.json`, then:
+---
 
+### 3. Team Member Setup
+
+After cloning the project:
+
+1. **Install FVM (if not already installed):**
 ```bash
-flutter pub get
+dart pub global activate fvm
 ```
+
+2. **Install the correct Flutter version for this project:**
+```bash
+fvm use 3.19.6  # Or whatever is specified in .fvm/fvm_config.json
+fvm install
+```
+
+3. **Use FVM commands to run Flutter:**
+```bash
+fvm flutter pub get
+fvm flutter run
+```
+
+> ⚠️ Avoid using `flutter run` directly unless your system Flutter version matches the FVM version.
 
 ---
 
@@ -72,19 +103,6 @@ flutter pub get
 
 **FVM (Flutter Version Management)** ensures everyone on the team uses the **same Flutter version**, avoiding version mismatch issues and environment bugs.
 
-### To install FVM:
-
-```bash
-dart pub global activate fvm
-```
-
-Then add it to your path:
-
-```bash
-export PATH="$PATH":"$HOME/.pub-cache/bin"
-```
-
-For Windows users, add it via Environment Variables.  
 More help: [https://fvm.app/docs/getting_started/installation](https://fvm.app/docs/getting_started/installation)
 
 ---
@@ -122,17 +140,6 @@ extension ThemeContext on BuildContext {
 }
 ```
 
-Usage:
-
-```dart
-Text(
-  'Hello',
-  style: context.textTheme.bodyMedium?.copyWith(
-    color: context.colorScheme.primary,
-  ),
-);
-```
-
 ### ✅ Padding Extensions
 
 ```dart
@@ -143,7 +150,7 @@ extension PaddingContext on BuildContext {
 }
 ```
 
-Usage:
+### ✅ Usage Example in Widgets
 
 ```dart
 Padding(
@@ -156,9 +163,7 @@ Padding(
 
 ## 🎨 ColorScheme + AppColors Usage
 
-This template uses `ColorScheme` for theme-aware UI. All semantic colors like `primary`, `onPrimary`, `secondary`, `error`, etc., are mapped using `AppColors`.
-
-`AppColors` provides consistent base colors, which are used to generate the `ColorScheme` for both light and dark themes.
+This template uses `ColorScheme` for theme-aware UI.
 
 ```dart
 class AppColors {
@@ -171,7 +176,7 @@ class AppColors {
 }
 ```
 
-Then these are mapped in `ThemeData.colorScheme`:
+Then mapped in `ThemeData.colorScheme`:
 
 ```dart
 ThemeData(
@@ -185,25 +190,6 @@ ThemeData(
   ),
 )
 ```
-
-### ✅ Usage Example in Widgets
-
-```dart
-Container(
-  padding: context.paddingS,
-  color: AppColors.primary, // Shows actual color (VS Code color box)
-  child: Text(
-    'Primary container',
-    style: context.textTheme.bodyMedium?.copyWith(
-      color: AppColors.onPrimary, // Text color on primary
-    ),
-  ),
-);
-```
-
-🖼️ In VS Code, using `AppColors.primary` will show a small color preview box beside the color value, useful for visual identification.
-
-> Prefer using `context.colorScheme.primary` when building theme-aware widgets that auto-adjust for dark/light modes.
 
 ---
 
