@@ -40,8 +40,8 @@ lib/
 - Clone the newly created repo:
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone <your-repo-url>
+cd <your-project-folder>
 ```
 
 ---
